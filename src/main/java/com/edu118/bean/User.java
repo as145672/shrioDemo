@@ -19,7 +19,7 @@ public class User implements Serializable {
     @Id
     @KeySql(useGeneratedKeys = true)
     private Integer uid;
-    @Column(name = "username")
+    @Column(name = "userName")
     private String username;
     @Column(name = "userPassword")
     private String password;
