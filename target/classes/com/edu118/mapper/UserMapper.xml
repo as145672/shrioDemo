@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edu118.mapper.UserMapper">
+    <resultMap id="UserResultMap" type="com.edu118.bean.User" >
+		<result column="uid" property="uid" />
+		<result column="userName" property="username" />
+		<result column="userPassword" property="password" />
+		<result column="describe" property="describe" />
+		<result column="status" property="status" />
+    </resultMap>
+	
+	<!-- 根据用户名查询用户信息，验证是否 -->
+	<select id="findByName" parameterType="String" resultMap="UserResultMap">
+		SELECT `uid`,`userName`,`userPassword`,`describe`,`status` FROM user WHERE userName=#{username}
+	</select>
+	
+	<!-- 根据用户id查询该用户所有的角色数据 -->
+	<select id="findAllRoleByUser" parameterType="int" resultType="String">
+		SELECT flag FROM role WHERE rid IN (
+			SELECT rid FROM user_role WHERE uid=#{uid})
+	</select>
+	
+	<!-- 根据用户id查询该用户所有的权限 -->
+	<select id="findAllpermissionByUser"  parameterType="int" resultType="String">
+		SELECT flag FROM permission WHERE pid IN (
+			SELECT pid FROM role_permission WHERE rid IN (
+				SELECT rid FROM user_role WHERE uid=#{uid}))
+	</select>
+	<select id="findUserRoleByUsername" resultType="String">
+		SELECT flag FROM role WHERE rid IN(
+			SELECT rid FROM user_role WHERE uid = (
+				SELECT uid FROM `user` WHERE userName = #{username}
+			)
+		)
+	</select>
+	<select id="findUserPermissionByUsername" resultType="String">
+		SELECT flag FROM permission WHERE pid IN(
+			SELECT pid FROM role_permission WHERE rid IN(
+				SELECT rid FROM user_role WHERE uid = (
+					SELECT uid FROM `user` WHERE userName = #{username}
+				)
+			)
+		)
+	</select>
+</mapper>
